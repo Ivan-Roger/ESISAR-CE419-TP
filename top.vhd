@@ -15,12 +15,14 @@ use IEEE.numeric_std.all;
 entity top is
     port (
         clk          : in STD_LOGIC;
+        start        : in STD_LOGIC;
         enable       : in STD_LOGIC;
         reset        : in STD_LOGIC;
-        data         : in STD_LOGIC_VECTOR (7 downto 0);
+--        data         : in STD_LOGIC_VECTOR (7 downto 0);
         req_out      : out STD_LOGIC;
         ack_out      : out STD_LOGIC;
         clk2_out     : out STD_LOGIC;
+        ready        : out STD_LOGIC;
         disp_an      : out STD_LOGIC_VECTOR (3 downto 0);
         disp_dp      : out STD_LOGIC;
         disp_seg     : out STD_LOGIC_VECTOR (6 downto 0);
@@ -57,27 +59,27 @@ architecture top_arch of top is
     signal data_bus     : std_logic_vector (7 downto 0);
     signal data_out     : std_logic_vector (7 downto 0);
     
---    signal data_in      : std_logic_vector (7 downto 0);
---    type Tab is array (15 DOWNTO 0) of std_logic_vector (7 DOWNTO 0);
---    signal data         : Tab := (
---        "00000000",
---        "00000001",
---        "00000010",
---        "00000100",
---        "00001000",
---        "00010000",
---        "00100000",
---        "01000000",
---        "10000000",
---        "01000000",
---        "00100000",
---        "00010000",
---        "00001000",
---        "00000100",
---        "00000010",
---        "00000001"
---    ); -- 2D array
---    signal i            : integer range 0 to 15 := 0;
+    signal data_in      : std_logic_vector (7 downto 0);
+    type Tab is array (15 DOWNTO 0) of std_logic_vector (7 DOWNTO 0);
+    signal data         : Tab := (
+        "00000000",
+        "00000001",
+        "00000010",
+        "00000100",
+        "00001000",
+        "00010000",
+        "00100000",
+        "01000000",
+        "10000000",
+        "01000000",
+        "00100000",
+        "00010000",
+        "00001000",
+        "00000100",
+        "00000010",
+        "00000001"
+    ); -- 2D array
+    signal data_index   : std_logic_vector (15 downto 0);
     
     signal clk2         : std_logic;
 begin
@@ -91,30 +93,25 @@ begin
             clk  => clk,
             clk2 => clk2
         );
-    
-    -- Select data to send
---    process(clk2)
---    begin
---        if (clk2'event and clk2='1') then
---            if (enable='1' and ack='1') then
---                i <= i + 1;
---            end if;
---            data_in <= data(i);
---        end if;
---    end process;
+                
+    -- Memory access
+    data_in <= data(to_integer(unsigned(data_index)));
 
     -- Talker entity (quick clock)
-    i_talker : entity work.talker
+    i_talker : entity work.talker_n
         generic map (
-            C_NB_BIT    => 8
+            C_NB_BIT    => 8,
+            C_NB_MSG    => 16
         )
         port map (
             clk         => clk,
             reset       => reset,
-            enable      => enable,
-            ack_sync    => ack,
-            data_in     => data,
+            start       => start,
+            ack         => ack,
+            data_in     => data_in,
             req         => req,
+            ready       => ready,
+            index       => data_index,
             data_out    => data_bus
         );
         
