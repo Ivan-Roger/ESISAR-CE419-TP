@@ -80,21 +80,17 @@ architecture top_arch of top is
 --    signal i            : integer range 0 to 15 := 0;
     
     signal clk2         : std_logic;
-    signal clk2_count   : integer range 0 to 25000000;
 begin
 
     -- Generate slower clock
-    process(clk)
-    begin
-        if (clk'event and clk = '1') then
-            clk2 <= clk2;
-            clk2_count <= clk2_count + 1;
-            if (clk2_count >= 25000000) then
-                clk2_count <= 0;
-                clk2 <= not clk2;
-            end if;
-        end if;
-    end process;
+    slow_clock : entity work.subclock_counter
+        generic map (
+            COUNT => 25000000
+        )
+        port map (
+            clk  => clk,
+            clk2 => clk2
+        );
     
     -- Select data to send
 --    process(clk2)
