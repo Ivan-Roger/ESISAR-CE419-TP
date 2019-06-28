@@ -17,7 +17,7 @@ entity top is
         clk          : in STD_LOGIC;
         enable       : in STD_LOGIC;
         reset        : in STD_LOGIC;
-        data         : in STD_LOGIC_VECTOR (7 downto 0);
+        --data         : in STD_LOGIC_VECTOR (7 downto 0);
         req_out      : out STD_LOGIC;
         ack_out      : out STD_LOGIC;
         clk2_out     : out STD_LOGIC;
@@ -57,27 +57,27 @@ architecture top_arch of top is
     signal data_bus     : std_logic_vector (7 downto 0);
     signal data_out     : std_logic_vector (7 downto 0);
     
---    signal data_in      : std_logic_vector (7 downto 0);
---    type Tab is array (15 DOWNTO 0) of std_logic_vector (7 DOWNTO 0);
---    signal data         : Tab := (
---        "00000000",
---        "00000001",
---        "00000010",
---        "00000100",
---        "00001000",
---        "00010000",
---        "00100000",
---        "01000000",
---        "10000000",
---        "01000000",
---        "00100000",
---        "00010000",
---        "00001000",
---        "00000100",
---        "00000010",
---        "00000001"
---    ); -- 2D array
---    signal i            : integer range 0 to 15 := 0;
+    signal data_in      : std_logic_vector (7 downto 0);
+    type Tab is array (15 DOWNTO 0) of std_logic_vector (7 DOWNTO 0);
+    signal data         : Tab := (
+        "00000000",
+        "00000001",
+        "00000010",
+        "00000100",
+        "00001000",
+        "00010000",
+        "00100000",
+        "01000000",
+        "10000000",
+        "01000000",
+        "00100000",
+        "00010000",
+        "00001000",
+        "00000100",
+        "00000010",
+        "00000001"
+    ); -- 2D array
+    signal i            : integer range 0 to 15 := 0;
     
     signal clk2         : std_logic;
 begin
@@ -93,15 +93,15 @@ begin
         );
     
     -- Select data to send
---    process(clk2)
---    begin
---        if (clk2'event and clk2='1') then
---            if (enable='1' and ack='1') then
---                i <= i + 1;
---            end if;
---            data_in <= data(i);
---        end if;
---    end process;
+    process(clk2)
+    begin
+        if (clk2'event and clk2='1') then
+            if (enable='1' and ack='1') then
+                i <= i + 1;
+            end if;
+            data_in <= data(i);
+        end if;
+    end process;
 
     -- Talker entity (quick clock)
     i_talker : entity work.talker
@@ -113,7 +113,7 @@ begin
             reset       => reset,
             enable      => enable,
             ack_sync    => ack,
-            data_in     => data,
+            data_in     => data_in,
             req         => req,
             data_out    => data_bus
         );
