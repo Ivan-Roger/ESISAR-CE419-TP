@@ -23,6 +23,9 @@ architecture talker_tb_arch of talker_tb is
     signal data_out                 : STD_LOGIC_VECTOR (7 downto 0);
 begin
     i_uut : entity work.talker
+        generic map (
+            c_nb_bit => 8
+        )
         port map (
             clk         => clk_tb,
             reset       => reset_tb,
@@ -47,7 +50,7 @@ begin
         reset_tb <= '1';
         ack_tb <= '0';
         data_tb <= "00001111"; -- 0f
-        wait for 6ns;
+        wait for 7ns;
         
         enable_tb <= '0';
         reset_tb <= '0';
@@ -59,8 +62,8 @@ begin
         reset_tb <= '0';
         ack_tb <= '0';
         data_tb <= "10101010"; -- aa
-        wait for 10ns;
-        
+        wait for 12ns;
+                
         enable_tb <= '1';
         reset_tb <= '0';
         ack_tb <= '1';
